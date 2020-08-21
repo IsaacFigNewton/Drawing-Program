@@ -45,6 +45,7 @@ import java.awt.Dimension;
 import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
 import java.awt.GridLayout;
+import java.util.*;
 
 import javax.swing.*;
 
@@ -56,6 +57,7 @@ public class Drawer extends JPanel implements MouseMotionListener {
     //save the mouse's location within the canvas
     public static int mouseX = c.getWidth()/2;
     public static int mouseY = c.getHeight()/2;
+    public static boolean consumetherainbowbecometherainbow = false;
     
     public static void main(String[] args) {
         //Schedule a job for the event dispatch thread:
@@ -78,6 +80,8 @@ public class Drawer extends JPanel implements MouseMotionListener {
         JFrame frame = new JFrame("Fractal Drawer");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(800, 800);
+        // add mouseMotionListener to the frame 
+        c.addMouseMotionListener(new Drawer());
 
         //Creating the MenuBar and save as button
         JMenuBar mb = new JMenuBar();
@@ -87,18 +91,50 @@ public class Drawer extends JPanel implements MouseMotionListener {
         //Creating the panel at bottom and adding components
         JPanel panel = new JPanel(); // the panel is not visible in output
         JLabel label = new JLabel("Drawing tools");
-        //buttons
-        JButton brushType = new JButton("Change Brush");
-        JButton addBrushSize = new JButton("Increase Brush Size");
-        JButton removeBrushSize = new JButton("Decrease Brush Size");
+        
+        //toolbar
+        JToolBar toolbar = new JToolBar();
+        
+        //button menus
+        JPopupMenu brushMods = new JPopupMenu();
+        JButton modsButton = new JButton("Modify Brush Shape/Size");
+        JPopupMenu brushColors = new JPopupMenu();
+        JButton colorsButton = new JButton("Modify Brush Color");
+        
         JButton clearCanvas = new JButton("Clear Canvas");
         
-        //add button listeners
+        //brushMod buttons
+        JButton brushType = new JButton( "Change Brush");
+        JButton addBrushSize = new JButton("Increase Brush Size");
+        JButton removeBrushSize = new JButton("Decrease Brush Size");
+        
+        //brushColor buttons
+        JButton red = new JButton("Red");
+        JButton green = new JButton("Green");
+        JButton blue = new JButton("Blue");
+        JButton rainbow = new JButton("Rainbow");
+        
         save.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //save picture of canvas in some way
             }
         });
+        
+        //add popup menu callers
+        modsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //show menu
+                brushMods.setVisible(true);
+            }
+        });
+        colorsButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                //show menu
+                brushColors.setVisible(true);
+            }
+        });
+        
+        //add buttonMod listeners
         brushType.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 if (Brushes.type < 2)
@@ -123,22 +159,69 @@ public class Drawer extends JPanel implements MouseMotionListener {
                     Brushes.size = MAX_BRUSH_SIZE;
             }
         });
+        
+        //add brushColor listeners
+        red.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                consumetherainbowbecometherainbow = false;
+                stroke(Color.RED);
+            }
+        });
+        green.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                consumetherainbowbecometherainbow = false;
+                stroke(Color.GREEN);
+            }
+        });
+        blue.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                consumetherainbowbecometherainbow = false;
+                stroke(Color.BLUE);
+            }
+        });
+        rainbow.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                consumetherainbowbecometherainbow = true;
+            }
+        });
+        
         clearCanvas.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 clearCanvas();
             }
         });
         
-        // Components added to the bottom panel using Flow Layout
-        panel.add(label);
-        panel.add(brushType);
-        panel.add(addBrushSize);
-        panel.add(removeBrushSize);
+        //brush modifiers added to brush popup menu
+        brushMods.add(brushType);
+        brushMods.add(addBrushSize);
+        brushMods.add(removeBrushSize);
+        
+        //brush colors added to brush popup menu
+        brushColors.add(red);
+        brushColors.add(green);
+        brushColors.add(blue);
+        brushColors.add(rainbow);
+        
+//        //fix up popup menus
+//        //brushMod
+//        JPopupMenu brushMods = createDropDownMenu();
+//        ImageIcon icon = new ImageIcon(getClass().getResource("/net/codejava/swing/images/new.gif"));
+//        JButton dropDown1 = DropDownButtonFactory.createDropDownButton(icon, popupMenu);
+//        //brushColor
+//        JPopupMenu brushColors = createDropDownMenu();
+//        ImageIcon icon = new ImageIcon(getClass().getResource("/net/codejava/swing/images/new.gif"));
+//        JButton dropDown2 = DropDownButtonFactory.createDropDownButton(icon, popupMenu);
+        
+        //add menus to toolbar
+        toolbar.add(modsButton);
+        toolbar.add(colorsButton);
+        
+        //add toolbar to bottom panel
+        panel.add(toolbar);
+        
+        //add reset button
         panel.add(clearCanvas);
         
-        // add mouseMotionListener to the frame 
-        c.addMouseMotionListener(new Drawer());
-
         //Adding Components to the frame.
         frame.getContentPane().add(BorderLayout.SOUTH, panel);
         frame.getContentPane().add(BorderLayout.NORTH, mb);
@@ -218,10 +301,12 @@ public class Drawer extends JPanel implements MouseMotionListener {
         //for class
         mouseX = e.getX();
         mouseY = e.getY();
+        
+        if (consumetherainbowbecometherainbow)
+            Rainbow.doIt();
 
         //paint?
         Brushes.paint(c, e.getX(), e.getY());
-//        }
     }
 }
 
@@ -229,8 +314,9 @@ public class Drawer extends JPanel implements MouseMotionListener {
 ********************************************************************************
 Template and drawing tools:     SLOHS, SLO, CA.
 Mouse events:                   https://www.geeksforgeeks.org/mouselistener-mousemotionlistener-java/
-Mouse Motion Listener Tutorial: https://docs.oracle.com/javase/tutorial/uiswing/examples/events/index.html#MouseMotionEventDemo
-Button Listeners:               https://stackoverflow.com/questions/21879243/how-to-create-on-click-event-for-buttons-in-swing/21879526
-Angle Calculation:              https://stackoverflow.com/questions/9970281/java-calculating-the-angle-between-two-points-in-degrees
-
+Mouse motion listener Ttutorial: https://docs.oracle.com/javase/tutorial/uiswing/examples/events/index.html#MouseMotionEventDemo
+Button listeners:               https://stackoverflow.com/questions/21879243/how-to-create-on-click-event-for-buttons-in-swing/21879526
+Angle calculation:              https://stackoverflow.com/questions/9970281/java-calculating-the-angle-between-two-points-in-degrees
+Menus:                          https://www.codejava.net/java-se/swing/how-to-create-drop-down-button-in-swing
+Menu buttons:                   https://stackoverflow.com/questions/15681237/how-to-code-a-dropdownbutton-in-java
 */
