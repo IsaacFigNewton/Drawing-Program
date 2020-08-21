@@ -5,8 +5,10 @@
  */
 package drawing.program;
 
+import static drawing.program.Drawer.strokeColor;
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+
 /**
  *
  * @author Owner
@@ -23,13 +25,14 @@ public class Brushes {
     //draw fractal each iteration
     public static void paint(Canvas canvas, int x, int y) {
         c = canvas;
+        stroke(Drawer.strokeColor);
         
         //brush 1
         if (type == 0) {
-            circle(x - size, y - size, size*2);
+            circle(x, y, size*2);
         //brush 2
         } else if (type == 1) {
-            circle(x - size/2, y - size/2, size);
+            circle(x, y, size);
         //brush 3
         } else if (type == 2){
             rect(x, y, size, size);
@@ -45,18 +48,25 @@ public class Brushes {
     }
     public static void circle(int x, int y, int r) {
         Graphics2D g2 = (Graphics2D) c.getGraphics();
-        Shape circle = new Ellipse2D.Double(x, y, r, r);
+        Shape circle = new Ellipse2D.Double(x - r/2, y - r/2, r, r);
         g2.draw(circle);
     }
     public static void rect(int x, int y, int width, int height) {
         Graphics2D g2 = (Graphics2D) c.getGraphics();
-        Shape rect = new Rectangle(x, y, width, height);
+        Shape rect = new Rectangle(x - width/2, y - height/2, width, height);
         g2.draw(rect);
     }
     public static void fillRect(int x1, int y1, int x2, int y2) {
         Graphics2D g2 = (Graphics2D) c.getGraphics();
         g2.setColor(Color.WHITE);
         g2.fillRect(x1, y1, x2, y2);
+    }
+    
+    //getters
+    
+    //setters
+    public static void stroke(Color theColor) {
+        c.getGraphics().setColor(theColor);
     }
     
     //other methods

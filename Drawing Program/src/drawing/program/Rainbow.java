@@ -11,6 +11,7 @@ package drawing.program;
  */
 
 import static drawing.program.Drawer.stroke;
+import static drawing.program.Drawer.strokeColor;
 import java.awt.*;
 
 public class Rainbow {
@@ -70,6 +71,6 @@ public class Rainbow {
             b = 0;
         }
 
-        stroke(new Color(r, g, b));
+        Drawer.strokeColor = new Color(r, g, b);
     }
 }

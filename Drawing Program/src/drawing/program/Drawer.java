@@ -58,6 +58,7 @@ public class Drawer extends JPanel implements MouseMotionListener {
     public static int mouseX = c.getWidth()/2;
     public static int mouseY = c.getHeight()/2;
     public static boolean consumetherainbowbecometherainbow = false;
+    public static Color strokeColor = new Color(0, 0, 0);
     
     public static void main(String[] args) {
         //Schedule a job for the event dispatch thread:
@@ -125,11 +126,13 @@ public class Drawer extends JPanel implements MouseMotionListener {
             public void actionPerformed(ActionEvent e) {
                 //show menu
                 brushMods.setVisible(true);
+                brushColors.setVisible(false);
             }
         });
         colorsButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 //show menu
+                brushMods.setVisible(false);
                 brushColors.setVisible(true);
             }
         });
@@ -164,19 +167,19 @@ public class Drawer extends JPanel implements MouseMotionListener {
         red.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 consumetherainbowbecometherainbow = false;
-                stroke(Color.RED);
+                strokeColor = Color.RED;
             }
         });
         green.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 consumetherainbowbecometherainbow = false;
-                stroke(Color.GREEN);
+                strokeColor = Color.GREEN;
             }
         });
         blue.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
                 consumetherainbowbecometherainbow = false;
-                stroke(Color.BLUE);
+                strokeColor = Color.BLUE;
             }
         });
         rainbow.addActionListener(new ActionListener() {
