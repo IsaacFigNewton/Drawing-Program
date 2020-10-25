@@ -46,14 +46,16 @@ import java.awt.event.MouseMotionListener;
 import java.awt.event.MouseEvent;
 import java.awt.GridLayout;
 import java.util.*;
-
+import java.awt.image.*;
+import java.io.*;
+import javax.imageio.*;
 import javax.swing.*;
 
 public class Drawer extends JPanel implements MouseMotionListener {
     
-    private static int MAX_BRUSH_SIZE = 500;
+    private static final int MAX_BRUSH_SIZE = 500;
     //create the Canvas and Brushes
-    private static Canvas c = new Canvas();
+    public static Canvas c = new Canvas();
     //save the mouse's location within the canvas
     public static int mouseX = c.getWidth()/2;
     public static int mouseY = c.getHeight()/2;
@@ -86,7 +88,7 @@ public class Drawer extends JPanel implements MouseMotionListener {
 
         //Creating the MenuBar and save as button
         JMenuBar mb = new JMenuBar();
-        JButton save = new JButton("Save As");
+        JButton save = new JButton("Save Drawing");
         mb.add(save);
 
         //Creating the panel at bottom and adding components
@@ -116,8 +118,24 @@ public class Drawer extends JPanel implements MouseMotionListener {
         JButton rainbow = new JButton("Rainbow");
         
         save.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e){
+                try {
                 //save picture of canvas in some way
+//                BufferedImage img;
+//                for (int y = 0; y < c.getHeight(); y++) {
+//                    for (int x = 0; x < c.getWidth(); x++) {
+//                        img.setRGB(x, y, c.getPixelRGB(x, y));
+//                    }
+//                }
+                Container pane = frame;
+                BufferedImage img = new BufferedImage(pane.getWidth(), pane.getHeight(), BufferedImage.TYPE_INT_RGB);
+                Graphics2D g2d = img.createGraphics();
+                pane.printAll(g2d);
+                g2d.dispose();
+                saveDrawing(img);
+                } catch (IOException ex) {
+                    ex.printStackTrace();
+                }
             }
         });
         
@@ -311,15 +329,25 @@ public class Drawer extends JPanel implements MouseMotionListener {
         //paint?
         Brushes.paint(c, e.getX(), e.getY());
     }
+    
+    //Other methods
+    private static void saveDrawing (BufferedImage img) throws IOException {
+        try {
+            ImageIO.write(img, "png", new File("Saved Images\\save.png"));
+        } catch (IOException ex) {
+            ex.printStackTrace();
+        }
+    }
 }
 
 /*                                 Sources:
 ********************************************************************************
-Template and drawing tools:     SLOHS, SLO, CA.
-Mouse events:                   https://www.geeksforgeeks.org/mouselistener-mousemotionlistener-java/
-Mouse motion listener Ttutorial: https://docs.oracle.com/javase/tutorial/uiswing/examples/events/index.html#MouseMotionEventDemo
-Button listeners:               https://stackoverflow.com/questions/21879243/how-to-create-on-click-event-for-buttons-in-swing/21879526
-Angle calculation:              https://stackoverflow.com/questions/9970281/java-calculating-the-angle-between-two-points-in-degrees
-Menus:                          https://www.codejava.net/java-se/swing/how-to-create-drop-down-button-in-swing
-Menu buttons:                   https://stackoverflow.com/questions/15681237/how-to-code-a-dropdownbutton-in-java
+Template and drawing tools:         SLOHS, SLO, CA.
+Mouse events:                       https://www.geeksforgeeks.org/mouselistener-mousemotionlistener-java/
+Mouse motion listener Ttutorial:    https://docs.oracle.com/javase/tutorial/uiswing/examples/events/index.html#MouseMotionEventDemo
+Button listeners:                   https://stackoverflow.com/questions/21879243/how-to-create-on-click-event-for-buttons-in-swing/21879526
+Angle calculation:                  https://stackoverflow.com/questions/9970281/java-calculating-the-angle-between-two-points-in-degrees
+Menus:                              https://www.codejava.net/java-se/swing/how-to-create-drop-down-button-in-swing
+Menu buttons:                       https://stackoverflow.com/questions/12984207/cannot-convert-current-canvas-data-into-image-in-java
+Save As button:                         
 */

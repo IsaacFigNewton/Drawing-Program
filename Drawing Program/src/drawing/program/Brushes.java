@@ -25,7 +25,6 @@ public class Brushes {
     //draw fractal each iteration
     public static void paint(Canvas canvas, int x, int y) {
         c = canvas;
-        stroke(Drawer.strokeColor);
         
         //brush 1
         if (type == 0) {
@@ -40,18 +39,22 @@ public class Brushes {
         } else {
             System.out.println("error choosing fractal drawing type");
         }
+//        Drawer.c = c;
     }
     
     //class brushs
     public static void line(int x1, int y1, int x2, int y2) {
+        stroke(Drawer.strokeColor);
         c.getGraphics().drawLine(x1, y1, x2, y2);
     }
     public static void circle(int x, int y, int r) {
+        stroke(Drawer.strokeColor);
         Graphics2D g2 = (Graphics2D) c.getGraphics();
         Shape circle = new Ellipse2D.Double(x - r/2, y - r/2, r, r);
         g2.draw(circle);
     }
     public static void rect(int x, int y, int width, int height) {
+        stroke(Drawer.strokeColor);
         Graphics2D g2 = (Graphics2D) c.getGraphics();
         Shape rect = new Rectangle(x - width/2, y - height/2, width, height);
         g2.draw(rect);
