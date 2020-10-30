@@ -62,6 +62,9 @@ public class Drawer extends JPanel implements MouseMotionListener {
     public static boolean consumetherainbowbecometherainbow = false;
     public static Color strokeColor = new Color(0, 0, 0);
     
+    public static int type = 0;
+    public static int size = 100;
+    
     public static void main(String[] args) {
         //Schedule a job for the event dispatch thread:
         //creating and showing this application's GUI.
@@ -92,7 +95,8 @@ public class Drawer extends JPanel implements MouseMotionListener {
         mb.add(save);
 
         //Creating the panel at bottom and adding components
-        JPanel panel = new JPanel(); // the panel is not visible in output
+        JPanel bottomPanel = new JPanel(); // the panel is not visible in output
+        JPanel sidePanel = new JPanel();
         JLabel label = new JLabel("Drawing tools");
         
         //toolbar
@@ -158,26 +162,26 @@ public class Drawer extends JPanel implements MouseMotionListener {
         //add buttonMod listeners
         brushType.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (Brushes.type < 2)
-                    Brushes.type++;
+                if (type < 2)
+                    type++;
                 else
-                    Brushes.type = 0;
+                    type = 0;
             }
         });
         addBrushSize.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (Brushes.size < MAX_BRUSH_SIZE)
-                    Brushes.size++;
+                if (size < MAX_BRUSH_SIZE)
+                    size++;
                 else
-                    Brushes.size = 1;
+                    size = 1;
             }
         });
         removeBrushSize.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                if (Brushes.size - 2 > 1)
-                    Brushes.size -= 2;
+                if (size - 2 > 1)
+                    size -= 2;
                 else
-                    Brushes.size = MAX_BRUSH_SIZE;
+                    size = MAX_BRUSH_SIZE;
             }
         });
         
@@ -238,13 +242,18 @@ public class Drawer extends JPanel implements MouseMotionListener {
         toolbar.add(colorsButton);
         
         //add toolbar to bottom panel
-        panel.add(toolbar);
-        
+        bottomPanel.add(toolbar);
         //add reset button
-        panel.add(clearCanvas);
+        bottomPanel.add(clearCanvas);
+        
+        //add side popup panel elements
+        //doesn't work for some reason
+        sidePanel.add(brushMods);
+        sidePanel.add(brushColors);
         
         //Adding Components to the frame.
-        frame.getContentPane().add(BorderLayout.SOUTH, panel);
+        frame.getContentPane().add(BorderLayout.SOUTH, bottomPanel);
+        frame.getContentPane().add(BorderLayout.EAST, sidePanel);
         frame.getContentPane().add(BorderLayout.NORTH, mb);
         frame.getContentPane().add(BorderLayout.CENTER, c);
         frame.setVisible(true);
@@ -282,19 +291,23 @@ public class Drawer extends JPanel implements MouseMotionListener {
     
     //class drawing tools
     public static void line(int x1, int y1, int x2, int y2) {
+        stroke(strokeColor);
         c.getGraphics().drawLine(x1, y1, x2, y2);
     }
     public static void circle(int x, int y, int r) {
+        stroke(strokeColor);
         Graphics2D g2 = (Graphics2D) c.getGraphics();
         Shape circle = new Ellipse2D.Double(x, y, r, r);
         g2.draw(circle);
     }
     public static void rect(int x, int y, int width, int height) {
+        stroke(strokeColor);
         Graphics2D g2 = (Graphics2D) c.getGraphics();
         Shape rect = new Rectangle(x, y, width, height);
         g2.draw(rect);
     }
     public static void fillRect(int x1, int y1, int x2, int y2) {
+        stroke(strokeColor);
         Graphics2D g2 = (Graphics2D) c.getGraphics();
         g2.setColor(Color.WHITE);
         g2.fillRect(x1, y1, x2, y2);
@@ -327,7 +340,22 @@ public class Drawer extends JPanel implements MouseMotionListener {
             Rainbow.doIt();
 
         //paint?
-        Brushes.paint(c, e.getX(), e.getY());
+//        paint(e.getX(), e.getY());
+        int x = e.getX()-size;
+        int y = e.getY()-size;
+        
+        if (type == 0) {
+            circle(x, y, size*2);
+        //brush 2
+        } else if (type == 1) {
+            circle(x, y, size);
+        //brush 3
+        } else if (type == 2){
+            rect(x, y, size, size);
+        //more brushes here
+        } else {
+            System.out.println("error choosing fractal drawing type");
+        }
     }
     
     //Other methods
